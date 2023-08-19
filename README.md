@@ -25,7 +25,9 @@ Actual Image Name = Apple Cedar Rust , Predicted Image Name = Apple Cedar Rust
 
 Trained Model link ---https://drive.google.com/file/d/1Xns6liq0twIYB3a80KLLXaseiYeF2Rr3/view?usp=sharing
 Download the model which is a .h5 file and place in this same project directory.
+
 Dataset link---https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset
+
 Model training python notebook link---https://colab.research.google.com/drive/1NArNwBeDrozSRTNVVdg2zYL-YGhtRifN?usp=sharing
 This Model achieved accuracy of 96% and is trained on dataset with 70k+ images of 38 catorgies of plant diseases.
 
