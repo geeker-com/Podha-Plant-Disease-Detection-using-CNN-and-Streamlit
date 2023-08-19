@@ -20,4 +20,29 @@ Actual Image Name = Apple Cedar Rust , Predicted Image Name = Apple Cedar Rust
 1. Make sure you have Python installed (Python 3.8+ recommended).
 2. Clone this repository:
 3. git clone https://github.com/geeker-com/Podha-Plant-Disease-Prediction-using-CNN-and-Streamlit.git
-4. 
+4. Navigate to the project directory.
+5. Install required packages: run this command on termainal "pip install -r requirments.txt" without quotations.
+   
+To run the Plant Disease Prediction app, execute the following command on terminal:
+
+streamlit run main.py
+
+
+This will start the Streamlit development server, and you can access the app in your web browser by navigating to `http://localhost:8501`.
+
+Note: Make sure you are in the project directory when you run the above command.
+
+## Required Packages
+
+The following packages are required to run the app:
+
+- streamlit
+- tensorflow
+- pillow
+- keras
+- numpy
+
+You can install them using the provided `requirements.txt` file:
+
+If you have any questions or feedback, feel free to contact me at harshitpokhriyal1729@gmai.com.
+
