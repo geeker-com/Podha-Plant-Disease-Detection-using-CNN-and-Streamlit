@@ -52,5 +52,5 @@ The following packages are required to run the app:
 
 You can install them using the provided `requirements.txt` file:
 
-If you have any questions or feedback, feel free to contact me at harshitpokhriyal1729@gmai.com.
+If you have any questions or feedback, feel free to contact me at harshitpokhriyal1729@gmail.com.
 
