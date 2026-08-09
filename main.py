@@ -8,6 +8,9 @@ import base64
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import io
 
+st.set_page_config(page_title="Podha", page_icon="logo.png")
+
+@st.cache_data(show_spinner=False)
 def get_img_as_base64(file):
     with open(file, "rb") as f:
         data = f.read()
@@ -15,7 +18,6 @@ def get_img_as_base64(file):
 
 img = get_img_as_base64("black.jpg")
 logo_img = get_img_as_base64("logo.png")
-st.set_page_config(page_title="Podha", page_icon="logo.png")
 
 page_bg_img = f"""
 <style>
@@ -47,10 +49,13 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 Image_Width = 224
 Image_Height = 224
 Image_Size = (Image_Width, Image_Height)
-interpreter = tf.lite.Interpreter(model_path='resnet50_plant_disease_final_96.tflite')
-interpreter.allocate_tensors()
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
+@st.cache_resource
+def load_interpreter():
+    interpreter = tf.lite.Interpreter(model_path='resnet50_plant_disease_final_96.tflite')
+    interpreter.allocate_tensors()
+    return interpreter, interpreter.get_input_details(), interpreter.get_output_details()
+
+interpreter, input_details, output_details = load_interpreter()
 
 st.markdown("""
     <style>
@@ -101,7 +106,7 @@ with st.sidebar:
 
     st.markdown('<p class="big-2-font">Podha</p>', unsafe_allow_html=True)
 
-    st.markdown('<p class="small-font">Developed by<br>Divyansh Asthana\n, Akash Kumar\n, Harshit Pokhriyal\n</p>', unsafe_allow_html=True)
+    st.markdown('<p class="small-font">Developed by<br>Harshit Pokhriyal</p>', unsafe_allow_html=True)
 
 results = {
     0: 'Apple___Apple_scab',
@@ -168,14 +173,16 @@ def prediction(im):
 # this is the main function in which we define our webpage
 def main():
     im = load_image()
-    if (im != None):
-        im = im.convert('RGB').resize(Image_Size)
-        im = np.array(im, dtype=np.float32)
-        im = np.expand_dims(im, axis=0)
     # the below line ensures that when the button called 'Predict' is clicked,
     # the prediction function defined above is called to make the prediction
     # and store it in the variable result
     if st.button("Predict"):
+        if im is None:
+            st.warning("Please upload an image first.")
+            return
+        im = im.convert('RGB').resize(Image_Size)
+        im = np.array(im, dtype=np.float32)
+        im = np.expand_dims(im, axis=0)
         pred = prediction(im)
         class_x = np.argmax(pred, axis=1)
         class_x = int(class_x)
