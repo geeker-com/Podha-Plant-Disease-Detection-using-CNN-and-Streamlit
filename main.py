@@ -1,9 +1,8 @@
 
 import numpy as np
-from tensorflow import keras
+import tensorflow as tf
 from PIL import Image
 import streamlit as st
-import keras.utils as image
 import warnings
 import base64
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -48,7 +47,10 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 Image_Width = 224
 Image_Height = 224
 Image_Size = (Image_Width, Image_Height)
-classifier = keras.models.load_model('resnet50_plant_disease_final_96.h5', compile=False)
+interpreter = tf.lite.Interpreter(model_path='resnet50_plant_disease_final_96.tflite')
+interpreter.allocate_tensors()
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
 st.markdown("""
     <style>
@@ -57,8 +59,8 @@ st.markdown("""
         text-align: center;
         font-style: Helvetica;
         font-weight: bold;
-        color: white;
-        -webkit-text-stroke: 3px black;
+        color: #E5E4E2;
+       
         padding: 10px;
     }
     .big-2-font {
@@ -75,20 +77,22 @@ st.markdown("""
 st.markdown('<p class="big-font">Plant Disease Prediction</p>', unsafe_allow_html=True)
 
 with st.sidebar:
-    st.image("https://www.linkpicture.com/q/garden-plant-in-hand-cartoon-vector-24382370_1_-removebg-preview.png")
+    st.image("https://img.freepik.com/free-vector/plant-growing_78370-263.jpg")
     st.markdown("""
     <style>
     .big-font {
         font-size: 40px !important;
         text-align: center;
-        color: black;
+        color: white;
+        background: rgb(0, 0, 0); 
+        background: rgba(0, 0, 0, 0.5); 
         font-style: Helvetica;
         font-weight: bold;
     }
     .small-font {
         font-size: 20px !important;
         text-align: center;
-        color: purple;
+        color: #E5E4E2;
         font-style: Helvetica;
         font-weight: bold;
     }
@@ -97,7 +101,7 @@ with st.sidebar:
 
     st.markdown('<p class="big-2-font">Podha</p>', unsafe_allow_html=True)
 
-    st.markdown('<p class="small-font">Developed by<br>Harshit Pokhriyal\n</p>', unsafe_allow_html=True)
+    st.markdown('<p class="small-font">Developed by<br>Divyansh Asthana\n, Akash Kumar\n, Harshit Pokhriyal\n</p>', unsafe_allow_html=True)
 
 results = {
     0: 'Apple___Apple_scab',
@@ -154,7 +158,9 @@ def load_image():
 # defining the function which will make the prediction using
 # the data which the user inputs
 def prediction(im):
-    pred = classifier.predict(im)
+    interpreter.set_tensor(input_details[0]['index'], im)
+    interpreter.invoke()
+    pred = interpreter.get_tensor(output_details[0]['index'])
     print(pred)
     return pred
 
@@ -163,14 +169,14 @@ def prediction(im):
 def main():
     im = load_image()
     if (im != None):
-        im = im.resize(Image_Size)
-        im = image.img_to_array(im)
+        im = im.convert('RGB').resize(Image_Size)
+        im = np.array(im, dtype=np.float32)
         im = np.expand_dims(im, axis=0)
     # the below line ensures that when the button called 'Predict' is clicked,
     # the prediction function defined above is called to make the prediction
     # and store it in the variable result
     if st.button("Predict"):
-        pred = classifier.predict(im)
+        pred = prediction(im)
         class_x = np.argmax(pred, axis=1)
         class_x = int(class_x)
         # print(results[class_x])
